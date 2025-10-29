@@ -68,56 +68,48 @@ def muuda_luhendeid():
     tk.Button(luhendite_aken, text="Salvesta", command=salvesta).pack(pady=12)
    
 def ava_aken():
-    #----------------------Akna suurus ja asjad---------------
-    aken=tk.Tk()
+    aken = tk.Tk()
     aken.title("Kudumismustri skeemigeneraator")
-    greeting=tk.Label(aken, text="Genereeri oma skeem")
-    greeting.pack()
+    tervitus = tk.Label(aken, text="Genereeri oma skeem")
+    tervitus.pack()
     aken.geometry("1100x800")
-    #-------------------------------------------------------
 
-    #-------------------Tekstikast-----------------------------
-    left=tk.Frame(aken)
-    left.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=12, pady=12)
-    
-    tk.Label(left, text="Sisesta muster (üks rida = üks koerida):").pack(anchor="w")
-    
-    text = tk.Text(left, width=48, height=24)
-    text.pack(fill=tk.BOTH, expand=True)
-    #---------------------------------------------------------------------------
+    vasak_raam = tk.Frame(aken)
+    vasak_raam.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=12, pady=12)
 
-    # ------------------kuidas peaks valja nagema see kirjutamine-----------
-    text.insert(
+    tk.Label(vasak_raam, text="Sisesta muster (üks rida = üks koerda):").pack(anchor="w")
+
+    tekstikast = tk.Text(vasak_raam, width=48, height=24)
+    tekstikast.pack(fill=tk.BOTH, expand=True)
+
+    tekstikast.insert(
         "1.0",
         "Rida 1: p v p v p\n"
         "Rida 2: v p v p v\n"
         "Rida 3: v v v v p\n"
         "Rida 4: p p v v p\n"
     )
-    #-------------------------------------------------------
-    #------------------------Nupud------------------------------
-    nupp=tk.Frame(left)
-    nupp.pack(fill=tk.X, pady=8)
-    
-    tk.Button(nupp, text="Genereeri skeem",
-              command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT,padx=8)
-    
-    tk.Button(nupp, text="Salvesta PNG",
+
+    nupud = tk.Frame(vasak_raam)
+    nupud.pack(fill=tk.X, pady=8)
+
+    tk.Button(nupud, text="Genereeri skeem",
               command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT, padx=8)
 
-    tk.Button(nupp, text="Abi",
-              command=lambda: messagebox.showinfo("Abi", "See on abitekst")).pack(side=tk.LEFT, padx=8)
-    tk.Button(nupp, text="Muuda lühendeid", command=muuda_luhendeid).pack(side=tk.LEFT, padx=8)
-    #--------------------------------------------------------------
-    #------------------------Skeemi frame-------------------------
-    right = tk.Frame(aken)
-    right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=12, pady=12)
+    tk.Button(nupud, text="Salvesta PNG",
+              command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT, padx=8)
 
-    canvas = tk.Canvas(right, bg="#ffffcc")
-    canvas.pack(fill=tk.BOTH, expand=True)
-    #--------------------------------------------------------
-    
-    
+    tk.Button(nupud, text="Abi",
+              command=lambda: messagebox.showinfo("Abi", "See on abitekst")).pack(side=tk.LEFT, padx=8)
+
+    tk.Button(nupud, text="Muuda lühendeid", command=muuda_luhendeid).pack(side=tk.LEFT, padx=8)
+
+    parem_raam = tk.Frame(aken)
+    parem_raam.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=12, pady=12)
+
+    skeem = tk.Canvas(parem_raam, bg="#ffffcc")
+    skeem.pack(fill=tk.BOTH, expand=True)
+
     aken.mainloop()
 
     
