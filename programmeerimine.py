@@ -16,9 +16,8 @@ from tkinter import filedialog, messagebox #Tkinteri teegi dialoogid ja seal toi
 #----------------------------------------------------------
 #_------------------------Sümbolid-------------------------
 sumbolid = {
-   #--------------Need panin AI-ga mde kas on oiged aga siia peaksid tulema need mustrid, void ara muuta
-   "p": "parempidine",    # parempidine silmus
-    "v": "pahempidine",    # pahempidine silmus
+    "p": "parempidine",    # parempidine silmus
+    "v": "pahempidine",    # pahempidine silmus (v nagu "vasak", et lihtsam meelde jätta)
     "õ": "õhksilmus",      # õhksilmus
     "2kp": "2kokku_paremale",  # kaks kokku paremale kallutatud
     "2kv": "2kokku_vasakule",  # kaks kokku vasakule kallutatud
@@ -38,15 +37,15 @@ LINE_NUM_W = 56     # ruum rea numbrite jaoks vasakul ja paremal
 #---------------------Abitekst-----------------------------------
 def ava_aken():
     #----------------------Akna suurus ja asjad---------------
-    window=tk.Tk()
-    window.title("Kudumismustri skeemigeneraator")
-    greeting=tk.Label(window, text="Genereeri oma skeem")
+    aken=tk.Tk()
+    aken.title("Kudumismustri skeemigeneraator")
+    greeting=tk.Label(aken, text="Genereeri oma skeem")
     greeting.pack()
-    window.geometry("1100x800")
+    aken.geometry("1100x800")
     #-------------------------------------------------------
 
     #-------------------Tekstikast-----------------------------
-    left=tk.Frame(window)
+    left=tk.Frame(aken)
     left.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=12, pady=12)
     
     tk.Label(left, text="Sisesta muster (üks rida = üks koerida):").pack(anchor="w")
@@ -78,7 +77,7 @@ def ava_aken():
               command=lambda: messagebox.showinfo("Abi", "See on abitekst")).pack(side=tk.LEFT)
     #--------------------------------------------------------------
     #------------------------Skeemi frame-------------------------
-    right = tk.Frame(window)
+    right = tk.Frame(aken)
     right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=12, pady=12)
 
     canvas = tk.Canvas(right, bg="#ffffcc")
@@ -86,10 +85,9 @@ def ava_aken():
     #--------------------------------------------------------
     
     
-    window.mainloop()
+    aken.mainloop()
 
     
 
-#-----------------------------------------------------------------Akna sain valmis, aga on vaja funktsioone mis selle tootavaks muudavad------
-
+#-----------------------------------------------------------------
 ava_aken()
