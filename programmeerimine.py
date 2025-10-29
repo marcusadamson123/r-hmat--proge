@@ -34,7 +34,39 @@ GRID_W = 1          # ruudustiku joone paksus
 FONT = ImageFont.truetype("consola.ttf", 28)
 LINE_NUM_W = 56     # ruum rea numbrite jaoks vasakul ja paremal
 #----------------------------------------------------------------
-#---------------------Abitekst-----------------------------------
+#---------------------Funktsioonid-------------------------------------------------------------------------------------------------------------------------------------------------------------
+def muuda_luhendeid():
+    luhendite_aken = tk.Toplevel()
+    luhendite_aken.title("Muuda lühendeid")
+    luhendite_aken.geometry("400x400")
+
+    tk.Label(luhendite_aken, text="Muuda lühendeid:", font=("Arial", 12)).pack(pady=10)
+    sisestusvaljad = {}
+
+    for luhend in list(sumbolid.keys()):
+        rida = tk.Frame(luhendite_aken)
+        rida.pack(fill="x", pady=2, padx=10)
+
+        tk.Label(rida, text=sumbolid[luhend], width=18, anchor="w").pack(side="left")
+
+        sisestus = tk.Entry(rida)  
+        sisestus.insert(0, luhend)
+        sisestus.pack(side="left", fill="x", expand=True)
+
+        sisestusvaljad[luhend] = sisestus
+
+    def salvesta():
+        global sumbolid
+        uued_sumbolid = {}
+        for vana_luhend, sisestus in sisestusvaljad.items():
+            uus_luhend = sisestus.get().strip()
+            uued_sumbolid[uus_luhend] = sumbolid[vana_luhend]
+        sumbolid = uued_sumbolid
+        messagebox.showinfo("Salvestatud", "Lühendid muudetud!")
+        luhendite_aken.destroy()
+
+    tk.Button(luhendite_aken, text="Salvesta", command=salvesta).pack(pady=12)
+   
 def ava_aken():
     #----------------------Akna suurus ja asjad---------------
     aken=tk.Tk()
@@ -74,7 +106,8 @@ def ava_aken():
               command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT, padx=8)
 
     tk.Button(nupp, text="Abi",
-              command=lambda: messagebox.showinfo("Abi", "See on abitekst")).pack(side=tk.LEFT)
+              command=lambda: messagebox.showinfo("Abi", "See on abitekst")).pack(side=tk.LEFT, padx=8)
+    tk.Button(nupp, text="Muuda lühendeid", command=muuda_luhendeid).pack(side=tk.LEFT, padx=8)
     #--------------------------------------------------------------
     #------------------------Skeemi frame-------------------------
     right = tk.Frame(aken)
@@ -89,5 +122,6 @@ def ava_aken():
 
     
 
-#-----------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ava_aken()
+
