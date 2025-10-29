@@ -28,10 +28,10 @@ sumbolid = {
 }
 #----------------------------------------------------------
 #-----------------------Mõõtmed----------------------------
-CELL = 48           # ühe ruudu suurus pikslites (laius = kõrgus)
-PAD = 72            # ääre suurus pildi ümber (padding)
+CELL = 48           # ühe ruudu suurus pikslites laius = kõrgus
+PAD = 72            # ääre suurus pildi ümber padding
 GRID_W = 1          # ruudustiku joone paksus
-FONT = None         # siia laeme font-objekti hiljem
+FONT = ImageFont.truetype("consola.ttf", 28)
 LINE_NUM_W = 56     # ruum rea numbrite jaoks vasakul ja paremal
 #----------------------------------------------------------------
 #---------------------Abitekst-----------------------------------
