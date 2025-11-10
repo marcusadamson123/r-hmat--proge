@@ -16,14 +16,18 @@ from tkinter import filedialog, messagebox #Tkinteri teegi dialoogid ja seal toi
 #----------------------------------------------------------
 #_------------------------Sümbolid-------------------------
 sumbolid = {
-    "p": "parempidine",    # parempidine silmus
-    "v": "pahempidine",    # pahempidine silmus (v nagu "vasak", et lihtsam meelde jätta)
-    "õ": "õhksilmus",      # õhksilmus
-    "2kp": "2kokku_paremale",  # kaks kokku paremale kallutatud
-    "2kv": "2kokku_vasakule",  # kaks kokku vasakule kallutatud
-    "0": "pole_silmust",       # tühi koht (pole silmust)
-    "p_e": "palmik_ette",       # palmik 2x2 ette
-    "p_t": "palmik_taha",       # palmik 2x2 taha
+    "pp": "parempidine",    # parempidine silmus □
+    "ph": "pahempidine",    # pahempidine silmus ▪
+    "õs": "õhksilmus",      # õhksilmus ○
+    "2kp": "2kokku_paremale",  # kaks kokku paremale kallutatud /
+    "2kv": "2kokku_vasakule",  # kaks kokku vasakule kallutatud \
+    "2kph": "2kokku_pahempidi", # pahempidi 2 kokku kootud ⌃
+    "3pp": "3parempidi_kokku", # 3 kokku parempidi △
+    "3ph": "3pahempidi_kokku", # 3 kokku pahempidi ▼
+    "0": "pole_silmust",       # tühi koht (pole silmust) ▨
+    "p_e": "palmik_ette",       # palmik 2x2 ette ⌓
+    "p_t": "palmik_taha",       # palmik 2x2 taha ⌒
+    "n": "nupp", # *pp, õs* 3-4 korda ⊙
    
 }
 #----------------------------------------------------------
@@ -77,7 +81,7 @@ def ava_aken():
     vasak_raam = tk.Frame(aken)
     vasak_raam.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=12, pady=12)
 
-    tk.Label(vasak_raam, text="Sisesta muster (üks rida = üks koerda):").pack(anchor="w")
+    tk.Label(vasak_raam, text="Sisesta muster (üks rida = üks korda):").pack(anchor="w")
 
     tekstikast = tk.Text(vasak_raam, width=48, height=24)
     tekstikast.pack(fill=tk.BOTH, expand=True)
