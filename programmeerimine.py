@@ -231,3 +231,12 @@ def genereeri_skeem(skeem_canvas, tekstikast):
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ava_aken()
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
+# Algversiooni esitamise kommentaarid:
+# Kuidas senine koostöö sujunud? Kuidas on rollid jagatud? 
+    # Vastus: Seni on läinud koostöö hästi ja sujuvalt. Oleme pidevas suhtluses omavahel ja mõlemad tegeleme erinevate funktsioonide koostamisega.
+# Kui palju aega projektile on kulunud?
+    # Vastus: Projektile hetkel on kulunud meil mõlemal arvatavasti kokku kulunud ligikaudu 13 tundi, kuid ei ole tea täpselt, kuna pole seda mõõtnud.
+# Millised on projektiga seoses edasised plaanid ja edasiarendused?
+    # Vastus: Edasised plaanid on järgmised : 1) Kudumismustri andmebaasi tegemine, kus on kasutaja saab salvestada erinevaid mustreid 2) Reaalajas eelvaade, kus mustrid uuenduvad reaalajas, 3) Kasutajaliidese ilusamaks tegemine
+# 4) Keeletugi 5) Sümbolite ja värvide kohandamine 6) Automaatne mustri kontroll. Need on praegused plaanid, mis võivad muutuda.
