@@ -16,18 +16,18 @@ from tkinter import filedialog, messagebox #Tkinteri teegi dialoogid ja seal toi
 #----------------------------------------------------------
 #_------------------------Sümbolid-------------------------
 sumbolid = {
-    "pp": "parempidine",    # parempidine silmus □
-    "ph": "pahempidine",    # pahempidine silmus ▪
-    "õs": "õhksilmus",      # õhksilmus ○
-    "2kp": "2kokku_paremale",  # kaks kokku paremale kallutatud /
-    "2kv": "2kokku_vasakule",  # kaks kokku vasakule kallutatud \
-    "2kph": "2kokku_pahempidi", # pahempidi 2 kokku kootud ⌃
-    "3pp": "3parempidi_kokku", # 3 kokku parempidi △
-    "3ph": "3pahempidi_kokku", # 3 kokku pahempidi ▼
-    "0": "pole_silmust",       # tühi koht (pole silmust) ▨
-    "p_e": "palmik_ette",       # palmik 2x2 ette ⌓
-    "p_t": "palmik_taha",       # palmik 2x2 taha ⌒
-    "n": "nupp", # *pp, õs* 3-4 korda ⊙
+    "pp": "□",    # parempidine silmus 
+    "ph": "▪",    # pahempidine silmus 
+    "õs": "○",      # õhksilmus 
+    "2kp": "//",  # kaks kokku paremale kallutatud 
+    "2kv": "\\",  # kaks kokku vasakule kallutatud 
+    "2kph": "⌃", # pahempidi 2 kokku kootud 
+    "3pp": "△", # 3 kokku parempidi 
+    "3ph": "▼", # 3 kokku pahempidi 
+    "0": "▨",       # tühi koht (pole silmust) 
+    "p_e": "⌓",       # palmik 2x2 ette 
+    "p_t": "⌒",       # palmik 2x2 taha 
+    "n": "⊙", # *pp, õs* 3-4 korda 
    
 }
 #----------------------------------------------------------
@@ -88,17 +88,17 @@ def ava_aken():
 
     tekstikast.insert(
         "1.0",
-        "Rida 1: p v p v p\n"
-        "Rida 2: v p v p v\n"
-        "Rida 3: v v v v p\n"
-        "Rida 4: p p v v p\n"
+        "Rida 1: pp ph pp ph pp\n"
+        "Rida 2: ph pp ph pp ph\n"
+        "Rida 3: ph ph ph ph pp\n"
+        "Rida 4: pp pp ph ph pp\n"
     )
 
     nupud = tk.Frame(vasak_raam)
     nupud.pack(fill=tk.X, pady=8)
 
     tk.Button(nupud, text="Genereeri skeem",
-              command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT, padx=8)
+          command=lambda: genereeri_skeem(skeem, tekstikast)).pack(side=tk.LEFT, padx=8)
 
     tk.Button(nupud, text="Salvesta PNG",
               command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT, padx=8)
@@ -127,7 +127,45 @@ def muster_listiks(tekst: str):
         silmused = rida.split()
         read.append(silmused)
     return read
+
+def genereeri_skeem(skeem_canvas, tekstikast):
+    tekst = tekstikast.get("1.0", tk.END)
+    muster = muster_listiks(tekst)
     
+    skeem_canvas.delete("all")  # kustutab vana skeemi
+
+    # arvutab skeemi mõõtmed
+    read_arv = len(muster)
+    if read_arv == 0:
+        messagebox.showwarning("Tühi muster", "Sisesta muster enne genereerimist!")
+        return
+    
+    veerud = max(len(rida) for rida in muster)
+
+    # ruudustiku joonistamine
+    for r in range(read_arv):
+        for c in range(len(muster[r])):
+            x1 = c * CELL + 40
+            y1 = r * CELL + 40
+            x2 = x1 + CELL
+            y2 = y1 + CELL
+
+            skeem_canvas.create_rectangle(x1, y1, x2, y2, outline="black", width=1)
+
+            luhend = muster[r][c]
+            sumbol = sumbolid.get(luhend, luhend)
+            
+            skeem_canvas.create_text(
+                (x1 + x2) / 2,
+                (y1 + y2) / 2,
+                text=sumbol,
+                font=("Consolas", 14)
+            )
+
+    # ridade numbrid vasakule
+    for i in range(read_arv):
+        skeem_canvas.create_text(20, i * CELL + 65, text=f"{i+1}", font=("Arial", 12))
+
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ava_aken()
 
