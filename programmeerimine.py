@@ -10,7 +10,7 @@
 #-------------Impordid-------------------------------------
 import re  #avaldised                            
 import tkinter as tk #Pythoni GUI teek                    
-from PIL import Image, ImageDraw, ImageFont, ImageTk #pildi loomised ja joonistamised
+from PIL import Image, ImageDraw, ImageFont, ImageTk, ImageGrab #pildi loomised ja joonistamised
 from tkinter import filedialog, messagebox #Tkinteri teegi dialoogid ja seal toimetamised
 
 #----------------------------------------------------------
@@ -39,26 +39,30 @@ FONT = ImageFont.truetype("consola.ttf", 28)
 LINE_NUM_W = 56     # ruum rea numbrite jaoks vasakul ja paremal
 #----------------------------------------------------------------
 #---------------------Funktsioonid-------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Funktsioon, mis avab eraldi akna kudumissümbolite lühendite muutmiseks
 def muuda_luhendeid():
+    #Loob uue alamakna
     luhendite_aken = tk.Toplevel()
     luhendite_aken.title("Muuda lühendeid")
     luhendite_aken.geometry("400x400")
 
     tk.Label(luhendite_aken, text="Muuda lühendeid:", font=("Arial", 12)).pack(pady=10)
+    # Sõnastik, kuhu hiljem salvestatakse kasutaja sisestusväljad
     sisestusvaljad = {}
 
     for luhend in list(sumbolid.keys()):
+        # Iga lühendi jaoks luuakse eraldi rida
         rida = tk.Frame(luhendite_aken)
         rida.pack(fill="x", pady=2, padx=10)
-
+        # Vasakule kuvatakse vastava lühendi sümbol
         tk.Label(rida, text=sumbolid[luhend], width=18, anchor="w").pack(side="left")
-
+        # Paremale lisatakse tekstiväli, kus kasutaja saab lühendit muuta
         sisestus = tk.Entry(rida)  
         sisestus.insert(0, luhend)
         sisestus.pack(side="left", fill="x", expand=True)
 
         sisestusvaljad[luhend] = sisestus
-
+ # Sisemine funktsioon, mis läheb lahti nupuvajutusega ja salvestab mustrid
     def salvesta():
         global sumbolid
         uued_sumbolid = {}
@@ -70,14 +74,15 @@ def muuda_luhendeid():
         luhendite_aken.destroy()
 
     tk.Button(luhendite_aken, text="Salvesta", command=salvesta).pack(pady=12)
-   
+# Peamine funktsioon, mis loob ja kuvab kogu rakenduse akna
 def ava_aken():
+     # Põhiaken 
     aken = tk.Tk()
     aken.title("Kudumismustri skeemigeneraator")
     tervitus = tk.Label(aken, text="Genereeri oma skeem")
     tervitus.pack()
     aken.geometry("1100x800")
-
+#Vasak pool (sisendi jaoks)
     vasak_raam = tk.Frame(aken)
     vasak_raam.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=12, pady=12)
 
@@ -85,7 +90,7 @@ def ava_aken():
 
     tekstikast = tk.Text(vasak_raam, width=48, height=24)
     tekstikast.pack(fill=tk.BOTH, expand=True)
-
+#Näidismuster, mis kuvatakse kohe avamisel
     tekstikast.insert(
         "1.0",
         "Rida 1: pp ph pp ph pp\n"
@@ -93,28 +98,55 @@ def ava_aken():
         "Rida 3: ph ph ph ph pp\n"
         "Rida 4: pp pp ph ph pp\n"
     )
-
+ # Nuppude rida vasakul
     nupud = tk.Frame(vasak_raam)
     nupud.pack(fill=tk.X, pady=8)
 
     tk.Button(nupud, text="Genereeri skeem",
           command=lambda: genereeri_skeem(skeem, tekstikast)).pack(side=tk.LEFT, padx=8)
-
+# Nupp skeemi salvestamiseks
     tk.Button(nupud, text="Salvesta PNG",
-              command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT, padx=8)
-
+              command=lambda: salvesta_canvas_pildina(skeem)).pack(side=tk.LEFT, padx=8)
+# Abiinfo nupp (selgitab kasutajale programmi kasutust
     tk.Button(nupud, text="Abi",
               command=lambda: messagebox.showinfo("Abi", "Sisesta oma muster kastikesse ning klõpsa 'genereeri skeem'. Igale reale kirjuta vaid 1 mustririda! \nEt lühendeid muuta vali menüüst 'muuda lühendeid'.")).pack(side=tk.LEFT, padx=8)
-
+ # Nupp, mis avab muuda lühendeid akna
     tk.Button(nupud, text="Muuda lühendeid", command=muuda_luhendeid).pack(side=tk.LEFT, padx=8)
-
+ # Parem raam, kuhu joonistatakse genereeritud skeem
     parem_raam = tk.Frame(aken)
     parem_raam.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=12, pady=12)
-
+# Canvas, kuhu hiljem kuvatakse kudumisskeem
     skeem = tk.Canvas(parem_raam, bg="#ffffcc")
     skeem.pack(fill=tk.BOTH, expand=True)
 
     aken.mainloop()
+    
+def salvesta_canvas_pildina(canvas):
+    # Failinime küsimine
+    failitee = filedialog.asksaveasfilename(
+        defaultextension=".png",
+        filetypes=[("PNG failid", "*.png")],
+        title="Salvesta skeem pildina"
+    )
+    if not failitee:
+        return
+
+    # Uuendab canvase
+    canvas.update()
+
+    # Ekraanipildi kommentaarid
+    x = canvas.winfo_rootx()
+    y = canvas.winfo_rooty()
+    x1 = x + canvas.winfo_width()
+    y1 = y + canvas.winfo_height()
+
+    # Teeb ekraanipildi
+    pilt = ImageGrab.grab(bbox=(x, y, x1, y1))
+    pilt.save(failitee)
+
+    messagebox.showinfo("Salvestatud", f"Skeem salvestatud faili:\n{failitee} 😀 ")
+
+    
 
 #järjend järjenditest, et saaks mustrit genereerida skeemiks
 def muster_listiks(tekst: str):
@@ -168,4 +200,3 @@ def genereeri_skeem(skeem_canvas, tekstikast):
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ava_aken()
-
