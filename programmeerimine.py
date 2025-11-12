@@ -7,41 +7,45 @@
 # Kasutatud teegid: tkinter, Pillow, re
 # Eeskuju: PEP 8 ja PEP 257 dokumentatsioon ja ...........
 # ---------------------------------------------------------
-#-------------Impordid-------------------------------------
-import re  #avaldised                            
-import tkinter as tk #Pythoni GUI teek                    
-from PIL import Image, ImageDraw, ImageFont, ImageTk, ImageGrab #pildi loomised ja joonistamised
-from tkinter import filedialog, messagebox #Tkinteri teegi dialoogid ja seal toimetamised
 
-#----------------------------------------------------------
-#_------------------------Sümbolid-------------------------
+# ------------- Impordid -------------------------------------
+import re  # avaldised
+import tkinter as tk  # Pythoni GUI teek
+from PIL import Image, ImageDraw, ImageFont, ImageTk, ImageGrab  # pildi loomised ja joonistamised
+from tkinter import filedialog, messagebox  # Tkinteri teegi dialoogid ja seal toimetamised
+
+# ----------------------------------------------------------
+# ------------------------ Sümbolid -------------------------
 sumbolid = {
-    "pp": "□",    # parempidine silmus 
-    "ph": "▪",    # pahempidine silmus 
-    "õs": "○",      # õhksilmus 
-    "2kp": "//",  # kaks kokku paremale kallutatud 
-    "2kv": "\\",  # kaks kokku vasakule kallutatud 
-    "2kph": "⌃", # pahempidi 2 kokku kootud 
-    "3pp": "△", # 3 kokku parempidi 
-    "3ph": "▼", # 3 kokku pahempidi 
-    "0": "▨",       # tühi koht (pole silmust) 
-    "p_e": "⌓",       # palmik 2x2 ette 
-    "p_t": "⌒",       # palmik 2x2 taha 
-    "n": "⊙", # *pp, õs* 3-4 korda 
-   
+    "pp": "□",    # parempidine silmus
+    "ph": "▪",    # pahempidine silmus
+    "õs": "○",    # õhksilmus
+    "2kp": "//",  # kaks kokku paremale kallutatud
+    "2kv": "\\",  # kaks kokku vasakule kallutatud
+    "2kph": "⌃",  # pahempidi 2 kokku kootud
+    "3pp": "△",   # 3 kokku parempidi
+    "3ph": "▼",   # 3 kokku pahempidi
+    "0": "▨",     # tühi koht (pole silmust)
+    "p_e": "⌓",   # palmik 2x2 ette
+    "p_t": "⌒",   # palmik 2x2 taha
+    "n": "⊙",     # *pp, õs* 3-4 korda
 }
-#----------------------------------------------------------
-#-----------------------Mõõtmed----------------------------
+
+# ----------------------------------------------------------
+# ----------------------- Mõõtmed ----------------------------
 CELL = 48           # ühe ruudu suurus pikslites laius = kõrgus
 PAD = 72            # ääre suurus pildi ümber padding
 GRID_W = 1          # ruudustiku joone paksus
 FONT = ImageFont.truetype("consola.ttf", 28)
 LINE_NUM_W = 56     # ruum rea numbrite jaoks vasakul ja paremal
-#----------------------------------------------------------------
-#---------------------Funktsioonid-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------
+# --------------------- Funktsioonid ------------------------------
+
+
 # Funktsioon, mis avab eraldi akna kudumissümbolite lühendite muutmiseks
 def muuda_luhendeid():
-    #Loob uue alamakna
+    # Loob uue alamakna
     luhendite_aken = tk.Toplevel()
     luhendite_aken.title("Muuda lühendeid")
     luhendite_aken.geometry("400x400")
@@ -57,12 +61,13 @@ def muuda_luhendeid():
         # Vasakule kuvatakse vastava lühendi sümbol
         tk.Label(rida, text=sumbolid[luhend], width=18, anchor="w").pack(side="left")
         # Paremale lisatakse tekstiväli, kus kasutaja saab lühendit muuta
-        sisestus = tk.Entry(rida)  
+        sisestus = tk.Entry(rida)
         sisestus.insert(0, luhend)
         sisestus.pack(side="left", fill="x", expand=True)
 
         sisestusvaljad[luhend] = sisestus
- # Sisemine funktsioon, mis läheb lahti nupuvajutusega ja salvestab mustrid
+
+    # Sisemine funktsioon, mis läheb lahti nupuvajutusega ja salvestab mustrid
     def salvesta():
         global sumbolid
         uued_sumbolid = {}
@@ -74,15 +79,18 @@ def muuda_luhendeid():
         luhendite_aken.destroy()
 
     tk.Button(luhendite_aken, text="Salvesta", command=salvesta).pack(pady=12)
+
+
 # Peamine funktsioon, mis loob ja kuvab kogu rakenduse akna
 def ava_aken():
-     # Põhiaken 
+    # Põhiaken
     aken = tk.Tk()
     aken.title("Kudumismustri skeemigeneraator")
     tervitus = tk.Label(aken, text="Genereeri oma skeem")
     tervitus.pack()
     aken.geometry("1100x800")
-#Vasak pool (sisendi jaoks)
+
+    # Vasak pool (sisendi jaoks)
     vasak_raam = tk.Frame(aken)
     vasak_raam.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=12, pady=12)
 
@@ -90,7 +98,8 @@ def ava_aken():
 
     tekstikast = tk.Text(vasak_raam, width=48, height=24)
     tekstikast.pack(fill=tk.BOTH, expand=True)
-#Näidismuster, mis kuvatakse kohe avamisel
+
+    # Näidismuster, mis kuvatakse kohe avamisel
     tekstikast.insert(
         "1.0",
         "Rida 1: pp ph pp ph pp\n"
@@ -98,29 +107,50 @@ def ava_aken():
         "Rida 3: ph ph ph ph pp\n"
         "Rida 4: pp pp ph ph pp\n"
     )
- # Nuppude rida vasakul
+
+    # Nuppude rida vasakul
     nupud = tk.Frame(vasak_raam)
     nupud.pack(fill=tk.X, pady=8)
 
-    tk.Button(nupud, text="Genereeri skeem",
-          command=lambda: genereeri_skeem(skeem, tekstikast)).pack(side=tk.LEFT, padx=8)
-# Nupp skeemi salvestamiseks
-    tk.Button(nupud, text="Salvesta PNG",
-              command=lambda: salvesta_canvas_pildina(skeem)).pack(side=tk.LEFT, padx=8)
-# Abiinfo nupp (selgitab kasutajale programmi kasutust
-    tk.Button(nupud, text="Abi",
-              command=lambda: messagebox.showinfo("Abi", "Sisesta oma muster kastikesse ning klõpsa 'genereeri skeem'. Igale reale kirjuta vaid 1 mustririda! \nEt lühendeid muuta vali menüüst 'muuda lühendeid'.")).pack(side=tk.LEFT, padx=8)
- # Nupp, mis avab muuda lühendeid akna
+    tk.Button(
+        nupud,
+        text="Genereeri skeem",
+        command=lambda: genereeri_skeem(skeem, tekstikast)
+    ).pack(side=tk.LEFT, padx=8)
+
+    # Nupp skeemi salvestamiseks
+    tk.Button(
+        nupud,
+        text="Salvesta PNG",
+        command=lambda: salvesta_canvas_pildina(skeem)
+    ).pack(side=tk.LEFT, padx=8)
+
+    # Abiinfo nupp (selgitab kasutajale programmi kasutust)
+    tk.Button(
+        nupud,
+        text="Abi",
+        command=lambda: messagebox.showinfo(
+            "Abi",
+            "Sisesta oma muster kastikesse ning klõpsa 'genereeri skeem'. "
+            "Igale reale kirjuta vaid 1 mustririda! \n"
+            "Et lühendeid muuta vali menüüst 'muuda lühendeid'."
+        )
+    ).pack(side=tk.LEFT, padx=8)
+
+    # Nupp, mis avab muuda lühendeid akna
     tk.Button(nupud, text="Muuda lühendeid", command=muuda_luhendeid).pack(side=tk.LEFT, padx=8)
- # Parem raam, kuhu joonistatakse genereeritud skeem
+
+    # Parem raam, kuhu joonistatakse genereeritud skeem
     parem_raam = tk.Frame(aken)
     parem_raam.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=12, pady=12)
-# Canvas, kuhu hiljem kuvatakse kudumisskeem
+
+    # Canvas, kuhu hiljem kuvatakse kudumisskeem
     skeem = tk.Canvas(parem_raam, bg="#ffffcc")
     skeem.pack(fill=tk.BOTH, expand=True)
 
     aken.mainloop()
-    
+
+
 def salvesta_canvas_pildina(canvas):
     # Failinime küsimine
     failitee = filedialog.asksaveasfilename(
@@ -146,9 +176,8 @@ def salvesta_canvas_pildina(canvas):
 
     messagebox.showinfo("Salvestatud", f"Skeem salvestatud faili:\n{failitee} 😀 ")
 
-    
 
-#järjend järjenditest, et saaks mustrit genereerida skeemiks
+# Järjend järjenditest, et saaks mustrit genereerida skeemiks
 def muster_listiks(tekst: str):
     read = []
     for rida in tekst.strip().splitlines():
@@ -160,10 +189,11 @@ def muster_listiks(tekst: str):
         read.append(silmused)
     return read
 
+
 def genereeri_skeem(skeem_canvas, tekstikast):
     tekst = tekstikast.get("1.0", tk.END)
     muster = muster_listiks(tekst)
-    
+
     skeem_canvas.delete("all")  # kustutab vana skeemi
 
     # arvutab skeemi mõõtmed
@@ -171,7 +201,7 @@ def genereeri_skeem(skeem_canvas, tekstikast):
     if read_arv == 0:
         messagebox.showwarning("Tühi muster", "Sisesta muster enne genereerimist!")
         return
-    
+
     veerud = max(len(rida) for rida in muster)
 
     # ruudustiku joonistamine
@@ -186,7 +216,7 @@ def genereeri_skeem(skeem_canvas, tekstikast):
 
             luhend = muster[r][c]
             sumbol = sumbolid.get(luhend, luhend)
-            
+
             skeem_canvas.create_text(
                 (x1 + x2) / 2,
                 (y1 + y2) / 2,
@@ -196,7 +226,8 @@ def genereeri_skeem(skeem_canvas, tekstikast):
 
     # ridade numbrid vasakule
     for i in range(read_arv):
-        skeem_canvas.create_text(20, i * CELL + 65, text=f"{i+1}", font=("Arial", 12))
+        skeem_canvas.create_text(20, i * CELL + 65, text=f"{i + 1}", font=("Arial", 12))
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ava_aken()
