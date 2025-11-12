@@ -104,7 +104,7 @@ def ava_aken():
               command=lambda: messagebox.showinfo("Salvesta", "Siin tuleks skeem salvestada")).pack(side=tk.LEFT, padx=8)
 
     tk.Button(nupud, text="Abi",
-              command=lambda: messagebox.showinfo("Abi", "See on abitekst")).pack(side=tk.LEFT, padx=8)
+              command=lambda: messagebox.showinfo("Abi", "Sisesta oma muster kastikesse ning klõpsa 'genereeri skeem'. Igale reale kirjuta vaid 1 mustririda! \nEt lühendeid muuta vali menüüst 'muuda lühendeid'.")).pack(side=tk.LEFT, padx=8)
 
     tk.Button(nupud, text="Muuda lühendeid", command=muuda_luhendeid).pack(side=tk.LEFT, padx=8)
 
@@ -116,8 +116,18 @@ def ava_aken():
 
     aken.mainloop()
 
+#järjend järjenditest, et saaks mustrit genereerida skeemiks
+def muster_listiks(tekst: str):
+    read = []
+    for rida in tekst.strip().splitlines():
+        rida = rida.strip()
+        if not rida:
+            continue
+        rida = re.sub(r"^[Rr]ida\s*\d+\s*[:\-]?\s*", "", rida)
+        silmused = rida.split()
+        read.append(silmused)
+    return read
     
-
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ava_aken()
 
