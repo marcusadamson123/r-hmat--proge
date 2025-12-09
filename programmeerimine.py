@@ -177,12 +177,28 @@ def ava_aken():
     parem_raam = tk.Frame(aken, bg=RAAM, bd=2, relief="ridge")
     parem_raam.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=12, pady=12)
 
-    global skeem
-    skeem = tk.Canvas(parem_raam, bg="#fff9e0")  # heledam taust skeemile
-    skeem.pack(fill=tk.BOTH, expand=True)
-    
-    aken.mainloop()
+    # Vasak osa – skeem
+    skeemi_raam = tk.Frame(parem_raam, bg=RAAM)
+    skeemi_raam.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
+    global skeem
+    skeem = tk.Canvas(skeemi_raam, bg="#fff9e0")  # heledam taust skeemile
+    skeem.pack(fill=tk.BOTH, expand=True)
+
+    # Parem osa – lühendite tabel
+    luhendid_raam = tk.Frame(parem_raam, bg=RAAM, bd=2, relief="sunken")
+    luhendid_raam.pack(side=tk.RIGHT, fill=tk.Y, padx=10, pady=10)
+
+    tk.Label(luhendid_raam, text="Sümbolid:", font=("Arial", 12, "bold"),
+         bg=RAAM, fg=TEKST).pack(pady=5)
+
+    # Iga sümboli rida tabelisse
+    for l, s in sumbolid.items():
+        tk.Label(luhendid_raam, text=f"{l}  =  {s}",
+                 font=("Consolas", 12),
+                 bg=RAAM, fg=TEKST).pack(anchor="w")
+
+    aken.mainloop()
 
 def salvesta_canvas_pildina(canvas):
     # Failinime küsimine
@@ -278,3 +294,4 @@ ava_aken()
 # Millised on projektiga seoses edasised plaanid ja edasiarendused?
     # Vastus: Edasised plaanid on järgmised : 1) Kudumismustri andmebaasi tegemine, kus on kasutaja saab salvestada erinevaid mustreid 2) Reaalajas eelvaade, kus mustrid uuenduvad reaalajas, 3) Kasutajaliidese ilusamaks tegemine
 # 4) Keeletugi 5) Sümbolite ja värvide kohandamine 6) Automaatne mustri kontroll. Need on praegused plaanid, mis võivad muutuda.
+
