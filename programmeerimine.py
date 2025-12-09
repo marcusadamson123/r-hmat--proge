@@ -15,6 +15,14 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk, ImageGrab  # pildi loomise
 from tkinter import filedialog, messagebox  # Tkinteri teegi dialoogid ja seal toimetamised
 
 # ----------------------------------------------------------
+# ------------- UI stiilid ------------------
+TAUST = "#f5f3e9"        # beež taust
+RAAM = "#e6e2d1"         # tumedam taust
+KAST = "#ffffff"         # valge taust kastidele
+TEKST = "#403c2f"        # pruunikas tekst
+NUPP_BG = "#dfdbca"      # nuppude taust
+NUPP_BG2 = "#cbc6b5"     # hover värv
+
 # ------------------------ Sümbolid -------------------------
 sumbolid = {
     "pp": "□",    # parempidine silmus
@@ -86,20 +94,41 @@ def ava_aken():
     # Põhiaken
     aken = tk.Tk()
     aken.title("Kudumismustri skeemigeneraator")
-    tervitus = tk.Label(aken, text="Genereeri oma skeem")
-    tervitus.pack()
     aken.geometry("1100x800")
+    aken.configure(bg=TAUST)
 
-    # Vasak pool (sisendi jaoks)
-    vasak_raam = tk.Frame(aken)
-    vasak_raam.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=12, pady=12)
+    # Tervitustekst
+    tervitus = tk.Label(
+        aken,
+        text="🧶 Kudumismustri skeemigeneraator 🧶",
+        font=("Arial", 20, "bold"),
+        bg=TAUST,
+        fg=TEKST
+    )
+    tervitus.pack(pady=10)
 
-    tk.Label(vasak_raam, text="Sisesta muster (üks rida = üks korda):").pack(anchor="w")
+    # Vasak raam (sisendi jaoks)
+    vasak_raam = tk.Frame(aken, bg=RAAM, bd=2, relief="ridge")
+    vasak_raam.pack(side=tk.LEFT, fill=tk.BOTH, padx=12, pady=12)
 
-    tekstikast = tk.Text(vasak_raam, width=48, height=24)
-    tekstikast.pack(fill=tk.BOTH, expand=True)
+    tk.Label(
+        vasak_raam,
+        text="Sisesta muster (üks rida = üks korda):",
+        font=("Arial", 11, "bold"),
+        bg=RAAM,
+        fg=TEKST
+    ).pack(anchor="w", pady=5)
 
-    # Näidismuster, mis kuvatakse kohe avamisel
+    tekstikast = tk.Text(
+        vasak_raam,
+        width=48,
+        height=24,
+        font=("Consolas", 12),
+        bg=KAST,
+        fg=TEKST
+    )
+    tekstikast.pack(fill=tk.BOTH, expand=True, pady=5)
+
     tekstikast.insert(
         "1.0",
         "Rida 1: pp ph pp ph pp\n"
@@ -107,47 +136,51 @@ def ava_aken():
         "Rida 3: ph ph ph ph pp\n"
         "Rida 4: pp pp ph ph pp\n"
     )
+    # Reaalajas muutumine
+    tekstikast.bind("<<Modified>>", lambda e: realajas_uuenda(skeem, tekstikast))
 
-    # Nuppude rida vasakul
-    nupud = tk.Frame(vasak_raam)
+    # Nupud paneel
+    nupud = tk.Frame(vasak_raam, bg=RAAM)
     nupud.pack(fill=tk.X, pady=8)
 
-    tk.Button(
-        nupud,
-        text="Genereeri skeem",
-        command=lambda: genereeri_skeem(skeem, tekstikast)
-    ).pack(side=tk.LEFT, padx=8)
-
-    # Nupp skeemi salvestamiseks
-    tk.Button(
-        nupud,
-        text="Salvesta PNG",
-        command=lambda: salvesta_canvas_pildina(skeem)
-    ).pack(side=tk.LEFT, padx=8)
-
-    # Abiinfo nupp (selgitab kasutajale programmi kasutust)
-    tk.Button(
-        nupud,
-        text="Abi",
-        command=lambda: messagebox.showinfo(
-            "Abi",
-            "Sisesta oma muster kastikesse ning klõpsa 'genereeri skeem'. "
-            "Igale reale kirjuta vaid 1 mustririda! \n"
-            "Et lühendeid muuta vali menüüst 'muuda lühendeid'."
+    # Nupu stiil
+    def uus_nupp(parent, tekst, käsk):
+        n = tk.Button(
+            parent,
+            text=tekst,
+            command=käsk,
+            font=("Arial", 11, "bold"),
+            bg=NUPP_BG,
+            fg=TEKST,
+            activebackground=NUPP_BG2,
+            relief="raised",
+            bd=2,
+            padx=8,
+            pady=4
         )
-    ).pack(side=tk.LEFT, padx=8)
+        n.pack(side=tk.LEFT, padx=5)
+        return n
 
-    # Nupp, mis avab muuda lühendeid akna
-    tk.Button(nupud, text="Muuda lühendeid", command=muuda_luhendeid).pack(side=tk.LEFT, padx=8)
+    uus_nupp(nupud, "Salvesta PNG", lambda: salvesta_canvas_pildina(skeem))
+    uus_nupp(
+        nupud,
+        "Abi",
+        lambda: messagebox.showinfo(
+            "Abi",
+            "Sisesta muster ja klõpsa 'Genereeri skeem'.\n"
+            "Üks rida = üks mustririda!"
+        )
+    )
+    uus_nupp(nupud, "Muuda lühendeid", muuda_luhendeid)
 
-    # Parem raam, kuhu joonistatakse genereeritud skeem
-    parem_raam = tk.Frame(aken)
+    # Parem raam (skeem)
+    parem_raam = tk.Frame(aken, bg=RAAM, bd=2, relief="ridge")
     parem_raam.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=12, pady=12)
 
-    # Canvas, kuhu hiljem kuvatakse kudumisskeem
-    skeem = tk.Canvas(parem_raam, bg="#ffffcc")
+    global skeem
+    skeem = tk.Canvas(parem_raam, bg="#fff9e0")  # heledam taust skeemile
     skeem.pack(fill=tk.BOTH, expand=True)
-
+    
     aken.mainloop()
 
 
@@ -227,6 +260,11 @@ def genereeri_skeem(skeem_canvas, tekstikast):
     # ridade numbrid vasakule
     for i in range(read_arv):
         skeem_canvas.create_text(20, i * CELL + 65, text=f"{i + 1}", font=("Arial", 12))
+        
+def realajas_uuenda(skeem_canvas, tekstikast):
+    if tekstikast.edit_modified():   # kontrolli kas muutus
+        genereeri_skeem(skeem_canvas, tekstikast)
+        tekstikast.edit_modified(False)  # eemalda "modified" märge
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
