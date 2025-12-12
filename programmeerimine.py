@@ -39,6 +39,22 @@ sumbolid = {
     "n": "⊙",     # *pp, õs* 3-4 korda
 }
 
+# --------------- Sümbolid välja kirjutatud ----------------
+sumbolid2 = {
+    "Parempidine silmus": "□",
+    "Pahempidine silmus": "▪",
+    "Õhksilmus": "○",
+    "2 kokku paremale": "//",
+    "2 kokku vasakule": "\\",
+    "2 kokku pahempidi": "⌃",
+    "3 kokku parempidi": "△",
+    "3 kpkku pahempidi": "▼",
+    "Silmust pole": "▨",
+    "Palmik 2x2 ette": "⌓",
+    "Palmik 2x2 taha": "⌒",
+    "Nupp": "⊙",
+}
+
 # ----------------------------------------------------------
 # ----------------------- Mõõtmed ----------------------------
 CELL = 48           # ühe ruudu suurus pikslites laius = kõrgus
@@ -193,7 +209,7 @@ def ava_aken():
          bg=RAAM, fg=TEKST).pack(pady=5)
 
     # Iga sümboli rida tabelisse
-    for l, s in sumbolid.items():
+    for l, s in sumbolid2.items():
         tk.Label(luhendid_raam, text=f"{l}  =  {s}",
                  font=("Consolas", 12),
                  bg=RAAM, fg=TEKST).pack(anchor="w")
