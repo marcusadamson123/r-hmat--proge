@@ -24,35 +24,20 @@ NUPP_BG = "#dfdbca"      # nuppude taust
 NUPP_BG2 = "#cbc6b5"     # hover värv
 
 # ------------------------ Sümbolid -------------------------
+# Võtmeks on kasutaja lühend, väärtuses nii kirjeldus kui sümbol
 sumbolid = {
-    "pp": "□",    # parempidine silmus
-    "ph": "▪",    # pahempidine silmus
-    "õs": "○",    # õhksilmus
-    "2kp": "//",  # kaks kokku paremale kallutatud
-    "2kv": "\\",  # kaks kokku vasakule kallutatud
-    "2kph": "⌃",  # pahempidi 2 kokku kootud
-    "3pp": "△",   # 3 kokku parempidi
-    "3ph": "▼",   # 3 kokku pahempidi
-    "0": "▨",     # tühi koht (pole silmust)
-    "p_e": "⌓",   # palmik 2x2 ette
-    "p_t": "⌒",   # palmik 2x2 taha
-    "n": "⊙",     # *pp, õs* 3-4 korda
-}
-
-# --------------- Sümbolid välja kirjutatud ----------------
-sumbolid2 = {
-    "Parempidine silmus": "□",
-    "Pahempidine silmus": "▪",
-    "Õhksilmus": "○",
-    "2 kokku paremale": "//",
-    "2 kokku vasakule": "\\",
-    "2 kokku pahempidi": "⌃",
-    "3 kokku parempidi": "△",
-    "3 kpkku pahempidi": "▼",
-    "Silmust pole": "▨",
-    "Palmik 2x2 ette": "⌓",
-    "Palmik 2x2 taha": "⌒",
-    "Nupp": "⊙",
+    "pp": {"nimi": "Parempidine silmus", "symbol": "□"},
+    "ph": {"nimi": "Pahempidine silmus", "symbol": "▪"},
+    "õs": {"nimi": "Õhksilmus", "symbol": "○"},
+    "2kp": {"nimi": "2 kokku paremale", "symbol": "//"},
+    "2kv": {"nimi": "2 kokku vasakule", "symbol": "\\"},
+    "2kph": {"nimi": "2 kokku pahempidi", "symbol": "⌃"},
+    "3pp": {"nimi": "3 kokku parempidi", "symbol": "△"},
+    "3ph": {"nimi": "3 kokku pahempidi", "symbol": "▼"},
+    "0": {"nimi": "Silmust pole", "symbol": "▨"},
+    "p_e": {"nimi": "Palmik 2x2 ette", "symbol": "⌓"},
+    "p_t": {"nimi": "Palmik 2x2 taha", "symbol": "⌒"},
+    "n": {"nimi": "Nupp", "symbol": "⊙"},
 }
 
 # ----------------------------------------------------------
@@ -69,40 +54,84 @@ LINE_NUM_W = 56     # ruum rea numbrite jaoks vasakul ja paremal
 
 # Funktsioon, mis avab eraldi akna kudumissümbolite lühendite muutmiseks
 def muuda_luhendeid():
-    # Loob uue alamakna
-    luhendite_aken = tk.Toplevel()
-    luhendite_aken.title("Muuda lühendeid")
-    luhendite_aken.geometry("400x400")
+    aken = tk.Toplevel()
+    aken.title("Muuda sümboleid")
+    aken.geometry("520x500")
 
-    tk.Label(luhendite_aken, text="Muuda lühendeid:", font=("Arial", 12)).pack(pady=10)
-    # Sõnastik, kuhu hiljem salvestatakse kasutaja sisestusväljad
-    sisestusvaljad = {}
+    tk.Label(aken, text="Muuda lühendit, nimetust ja sümbolit",
+             font=("Arial", 13, "bold")).pack(pady=10)
 
-    for luhend in list(sumbolid.keys()):
-        # Iga lühendi jaoks luuakse eraldi rida
-        rida = tk.Frame(luhendite_aken)
-        rida.pack(fill="x", pady=2, padx=10)
-        # Vasakule kuvatakse vastava lühendi sümbol
-        tk.Label(rida, text=sumbolid[luhend], width=18, anchor="w").pack(side="left")
-        # Paremale lisatakse tekstiväli, kus kasutaja saab lühendit muuta
-        sisestus = tk.Entry(rida)
-        sisestus.insert(0, luhend)
-        sisestus.pack(side="left", fill="x", expand=True)
+    sisestused = {}
 
-        sisestusvaljad[luhend] = sisestus
+    for luhend, andmed in sumbolid.items():
+        rida = tk.Frame(aken)
+        rida.pack(fill="x", padx=10, pady=4)
+
+        tk.Label(rida, text="Lühend:", width=8).pack(side="left")
+        e_luhend = tk.Entry(rida, width=8)
+        e_luhend.insert(0, luhend)
+        e_luhend.pack(side="left")
+
+        tk.Label(rida, text="Nimi:", width=8).pack(side="left")
+        e_nimi = tk.Entry(rida, width=22)
+        e_nimi.insert(0, andmed["nimi"])
+        e_nimi.pack(side="left")
+
+        tk.Label(rida, text="Sümbol:", width=8).pack(side="left")
+        e_sym = tk.Entry(rida, width=6)
+        e_sym.insert(0, andmed["symbol"])
+        e_sym.pack(side="left")
+
+        sisestused[luhend] = (e_luhend, e_nimi, e_sym)
 
     # Sisemine funktsioon, mis läheb lahti nupuvajutusega ja salvestab mustrid
     def salvesta():
         global sumbolid
-        uued_sumbolid = {}
-        for vana_luhend, sisestus in sisestusvaljad.items():
-            uus_luhend = sisestus.get().strip()
-            uued_sumbolid[uus_luhend] = sumbolid[vana_luhend]
-        sumbolid = uued_sumbolid
-        messagebox.showinfo("Salvestatud", "Lühendid muudetud!")
-        luhendite_aken.destroy()
+        uus = {}
 
-    tk.Button(luhendite_aken, text="Salvesta", command=salvesta).pack(pady=12)
+        for vana, (e_l, e_n, e_s) in sisestused.items():
+            uus_l = e_l.get().strip()
+            uus_n = e_n.get().strip()
+            uus_s = e_s.get().strip()
+
+            if not uus_l or not uus_s:
+                messagebox.showerror("Viga", "Lühend ja sümbol ei tohi olla tühjad!")
+                return
+
+            uus[uus_l] = {
+                "nimi": uus_n,
+                "symbol": uus_s
+            }
+
+        sumbolid = uus
+        uuenda_luhendite_tabel()
+        messagebox.showinfo("Valmis", "Sümbolid uuendatud!")
+        aken.destroy()
+
+    tk.Button(aken, text="Salvesta", command=salvesta,
+              font=("Arial", 11, "bold")).pack(pady=12)
+    
+# Uuendab lühendite tabelit, kui kasutaja on neid muutnud
+def uuenda_luhendite_tabel():
+    for widget in luhendid_raam.winfo_children():
+        widget.destroy()
+
+    tk.Label(
+        luhendid_raam,
+        text="Sümbolid:",
+        font=("Arial", 12, "bold"),
+        bg=RAAM,
+        fg=TEKST
+    ).pack(pady=5)
+
+    for andmed in sumbolid.values():
+        tk.Label(
+            luhendid_raam,
+            text=f"{andmed['nimi']}  =  {andmed['symbol']}",
+            font=("Consolas", 12),
+            bg=RAAM,
+            fg=TEKST
+        ).pack(anchor="w")
 
 
 # Peamine funktsioon, mis loob ja kuvab kogu rakenduse akna
@@ -202,6 +231,7 @@ def ava_aken():
     skeem.pack(fill=tk.BOTH, expand=True)
 
     # Parem osa – lühendite tabel
+    global luhendid_raam
     luhendid_raam = tk.Frame(parem_raam, bg=RAAM, bd=2, relief="sunken")
     luhendid_raam.pack(side=tk.RIGHT, fill=tk.Y, padx=10, pady=10)
 
@@ -209,10 +239,14 @@ def ava_aken():
          bg=RAAM, fg=TEKST).pack(pady=5)
 
     # Iga sümboli rida tabelisse
-    for l, s in sumbolid2.items():
-        tk.Label(luhendid_raam, text=f"{l}  =  {s}",
-                 font=("Consolas", 12),
-                 bg=RAAM, fg=TEKST).pack(anchor="w")
+    for andmed in sumbolid.values():
+        tk.Label(
+        luhendid_raam,
+            text=f"{andmed['nimi']}  =  {andmed['symbol']}",
+            font=("Consolas", 12),
+            bg=RAAM,
+            fg=TEKST
+        ).pack(anchor="w")
 
     aken.mainloop()
 
@@ -280,7 +314,7 @@ def genereeri_skeem(skeem_canvas, tekstikast):
             skeem_canvas.create_rectangle(x1, y1, x2, y2, outline="black", width=1)
 
             luhend = muster[r][c]
-            sumbol = sumbolid.get(luhend, luhend)
+            sumbol = sumbolid.get(luhend, {}).get("symbol", luhend)
 
             skeem_canvas.create_text(
                 (x1 + x2) / 2,
@@ -310,4 +344,3 @@ ava_aken()
 # Millised on projektiga seoses edasised plaanid ja edasiarendused?
     # Vastus: Edasised plaanid on järgmised : 1) Kudumismustri andmebaasi tegemine, kus on kasutaja saab salvestada erinevaid mustreid 2) Reaalajas eelvaade, kus mustrid uuenduvad reaalajas, 3) Kasutajaliidese ilusamaks tegemine
 # 4) Keeletugi 5) Sümbolite ja värvide kohandamine 6) Automaatne mustri kontroll. Need on praegused plaanid, mis võivad muutuda.
-
