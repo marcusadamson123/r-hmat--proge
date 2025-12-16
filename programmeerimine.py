@@ -206,7 +206,9 @@ def ava_aken():
         n.pack(side=tk.LEFT, padx=5)
         return n
 
-    uus_nupp(nupud, "Salvesta PNG", lambda: salvesta_canvas_pildina(skeem))
+    uus_nupp(nupud, "Salvesta PNG", lambda: salvesta_kogu_skeem_pildina(tekstikast))
+
+
     uus_nupp(
         nupud,
         "Abi",
@@ -224,11 +226,31 @@ def ava_aken():
 
     # Vasak osa – skeem
     skeemi_raam = tk.Frame(parem_raam, bg=RAAM)
+
     skeemi_raam.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
+    # Kerimisribad skeemi jaoks
+    v_scroll = tk.Scrollbar(skeemi_raam, orient=tk.VERTICAL)
+    h_scroll = tk.Scrollbar(skeemi_raam, orient=tk.HORIZONTAL)
+
+    v_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+    h_scroll.pack(side=tk.BOTTOM, fill=tk.X)
+
+    # Skeemi canvas (keritav)
     global skeem
-    skeem = tk.Canvas(skeemi_raam, bg="#fff9e0")  # heledam taust skeemile
-    skeem.pack(fill=tk.BOTH, expand=True)
+    skeem = tk.Canvas(
+        skeemi_raam,
+        bg="#fff9e0",
+        yscrollcommand=v_scroll.set,
+        xscrollcommand=h_scroll.set
+    )
+
+    skeem.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    v_scroll.config(command=skeem.yview)
+    h_scroll.config(command=skeem.xview)
+
+
 
     # Parem osa – lühendite tabel
     global luhendid_raam
@@ -326,16 +348,91 @@ def genereeri_skeem(skeem_canvas, tekstikast):
     # ridade numbrid vasakule
     for i in range(read_arv):
         skeem_canvas.create_text(20, i * CELL + 65, text=f"{i + 1}", font=("Arial", 12))
-        
+
+    # Uuendab canvase kerimisala vastavalt skeemi suurusele
+    skeem_canvas.configure(scrollregion=skeem_canvas.bbox("all"))
+      
 def realajas_uuenda(skeem_canvas, tekstikast):
     if tekstikast.edit_modified():   # kontrolli kas muutus
         genereeri_skeem(skeem_canvas, tekstikast)
-        tekstikast.edit_modified(False)  # eemalda "modified" märge
+        tekstikast.edit_modified(False)  # eemalda modified märge
+
+
+def salvesta_kogu_skeem_pildina(tekstikast):
+    # Failinime küsimine
+    failitee = filedialog.asksaveasfilename(
+        defaultextension=".png",
+        filetypes=[("PNG failid", "*.png")],
+        title="Salvesta kogu skeem pildina"
+    )
+    if not failitee:
+        return
+
+    tekst = tekstikast.get("1.0", tk.END)
+    muster = muster_listiks(tekst)
+
+    read_arv = len(muster)
+    if read_arv == 0:
+        messagebox.showwarning("Tühi muster", "Pole midagi salvestada!")
+        return
+
+    veerud = max(len(rida) for rida in muster)
+
+    # Arvuta pildi suurus
+    laius = veerud * CELL + 80
+    korgus = read_arv * CELL + 80
+
+    # Loo pilt
+    pilt = Image.new("RGB", (laius, korgus), "#fff9e0")
+    joonistaja = ImageDraw.Draw(pilt)
+
+    try:
+        font = ImageFont.truetype("consola.ttf", 28)
+        font_num = ImageFont.truetype("arial.ttf", 16)
+    except:
+        font = ImageFont.load_default()
+        font_num = ImageFont.load_default()
+
+    # Joonista ruudustik ja sümbolid
+    for r in range(read_arv):
+        for c in range(len(muster[r])):
+            x1 = c * CELL + 40
+            y1 = r * CELL + 40
+            x2 = x1 + CELL
+            y2 = y1 + CELL
+
+            joonistaja.rectangle([x1, y1, x2, y2], outline="black", width=1)
+
+            luhend = muster[r][c]
+            sumbol = sumbolid.get(luhend, {}).get("symbol", luhend)
+
+            bbox = joonistaja.textbbox((0, 0), sumbol, font=font)
+            w = bbox[2] - bbox[0]
+            h = bbox[3] - bbox[1]
+
+            joonistaja.text(
+                (x1 + CELL / 2 - w / 2, y1 + CELL / 2 - h / 2),
+                sumbol,
+                fill="black",
+                font=font
+            )
+
+        # Rea number
+        joonistaja.text(
+            (15, r * CELL + 55),
+            str(r + 1),
+            fill="black",
+            font=font_num
+        )
+
+    # Salvesta
+    pilt.save(failitee)
+    messagebox.showinfo("Valmis", "Kogu skeem on edukalt salvestatud! 😀")
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ava_aken()
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Algversiooni esitamise kommentaarid:
 # Kuidas senine koostöö sujunud? Kuidas on rollid jagatud? 
     # Vastus: Seni on läinud koostöö hästi ja sujuvalt. Oleme pidevas suhtluses omavahel ja mõlemad tegeleme erinevate funktsioonide koostamisega.
