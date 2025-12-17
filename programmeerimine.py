@@ -7,7 +7,7 @@
 # Kasutatud teegid: tkinter, Pillow, re
 # Eeskuju: PEP 8 ja PEP 257 dokumentatsioon ja ...........
 # ---------------------------------------------------------
-
+# Käivitamiseks kopeerida kood Thonnysse
 # ------------- Impordid -------------------------------------
 import re  # avaldised
 import tkinter as tk  # Pythoni GUI teek
